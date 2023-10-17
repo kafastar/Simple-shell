@@ -7,11 +7,12 @@
  */
 void process_line(char *line, FILE *fp)
 {
+     const char *delim = " \t\r\n\a";
+    char **args = tokenize(line, delim);
+	
 	if (fp == stdin)
 		printf("$ ");
 
-	/* Parse and execute the line */
-	char **args = tokenize_line(line);
 
 	if (args[0] == NULL)
 	{
