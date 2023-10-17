@@ -1,5 +1,8 @@
 #include "shell.h"
 
+/* Function Prototypes */
+char *get_full_path(char *cmd, char *path);
+
 /**
  * execute_command - Executes a given command.
  * @tokens: A list of tokens/parsed input.
@@ -8,9 +11,9 @@
  *
  * Return: 1 on success, 0 on failure.
  */
-int execute_command(char **tokens, char *path, char *progname)
+int execute(char **tokens, char *path, char *progname)
 {
-	pid_t pid, wpid;
+	pid_t pid;
 	int status;
 	char *full_cmd;
 
@@ -28,9 +31,8 @@ int execute_command(char **tokens, char *path, char *progname)
 	if (pid == 0) /* Child process */
 	{
 		if (execve(full_cmd, tokens, NULL) == -1)
-		{
 			perror(progname);
-		}
+
 		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0) /* Error forking */
@@ -40,7 +42,7 @@ int execute_command(char **tokens, char *path, char *progname)
 	else /* Parent process */
 	{
 		do {
-			wpid = waitpid(pid, &status, WUNTRACED);
+			(void)waitpid(pid, &status, WUNTRACED);
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 

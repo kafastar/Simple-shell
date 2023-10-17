@@ -1,4 +1,5 @@
 #include "shell.h"
+#include <string.h>
 
 /**
  * get_path - Retrieves the PATH value from the environment.
@@ -12,7 +13,7 @@ char *get_path(char **environ)
 
 	while (environ[i])
 	{
-		if (_strncmp(environ[i], "PATH=", 5) == 0)
+		if (strncmp(environ[i], "PATH=", 5) == 0)
 			return (&environ[i][5]);
 		i++;
 	}

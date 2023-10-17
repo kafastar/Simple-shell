@@ -4,6 +4,7 @@
  * main - Main entry point for our custom shell.
  * @argc: The number of arguments.
  * @argv: The argument vector.
+ *
  * Return: 0 on success, otherwise the appropriate error code.
  */
 int main(int argc, char **argv)
@@ -12,10 +13,12 @@ int main(int argc, char **argv)
 	char **tokens;
 	size_t len = 0;
 	ssize_t read;
+	char *path = getenv("PATH");
+	char *progname = argv[0];
 
 	if (argc > 1)
 	{
-		fprintf(stderr, "%s: Error: Too many arguments\n", argv[0]);
+		fprintf(stderr, "%s: Error: Too many arguments\n", progname);
 		return (1);
 	}
 
@@ -23,23 +26,25 @@ int main(int argc, char **argv)
 	{
 		printf("#cisfun$ ");
 		read = getline(&line, &len, stdin);
-		if (read == -1) /* Handle Ctrl+D (EOF) */
+		if (read == -1)
 		{
 			printf("\n");
 			free(line);
 			return (0);
 		}
-		else if (strncmp(line, "exit\n", 5) == 0) /* Exit command */
+		else if (strncmp(line, "exit\n", 5) == 0)
 		{
 			free(line);
 			return (0);
 		}
-		tokens = tokenize(line);
+		tokens = tokenize(line, " ");
 		if (tokens[0])
-			execute(tokens);
-		free_tokens(tokens);
-		free(line);
-		line = NULL;
+		{
+			execute(tokens, path, progname);
+			free_tokens(tokens);
+			free(line);
+			line = NULL;
+		}
 	}
 	return (0);
 }

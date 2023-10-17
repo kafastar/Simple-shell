@@ -41,3 +41,23 @@ char **tokenize(char *str, char *delim)
 	tokens[position] = NULL;
 	return (tokens);
 }
+
+/**
+ * free_tokens - Frees a list of tokens.
+ * @tokens: A list of tokens.
+ */
+void free_tokens(char **tokens)
+{
+int i = 0;
+
+if (tokens == NULL)
+return;
+
+while (tokens[i])
+{
+free(tokens[i]);
+i++;
+}
+
+free(tokens);
+}

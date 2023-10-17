@@ -23,11 +23,11 @@ char *find_cmd_in_PATH(char *cmd);
 int launch_process(char **args);
 void free_grid(char **grid);
 int handle_builtin_cmds(char **args);
-char **tokenize(char *str, char *delim)
-void execute(char **tokens);
+char **tokenize(char *str, char *delim);
+int execute(char **tokens, char *path, char *progname);
 void free_tokens(char **tokens);
 void print_env(char **env);
-int _strlen(char *str);
+void cmd_not_found(char *progname, char *cmd);
 
 /* Built-in function prototypes */
 int builtin_cd(char **args);
