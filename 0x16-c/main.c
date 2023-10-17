@@ -1,68 +1,45 @@
 #include "shell.h"
 
 /**
- * process_line - Process a single line of input.
- * @line: The line to process.
- * @fp: The file pointer to read from.
- */
-void process_line(char *line, FILE *fp)
-{
-     const char *delim = " \t\r\n\a";
-    char **args = tokenize(line, delim);
-	
-	if (fp == stdin)
-		printf("$ ");
-
-
-	if (args[0] == NULL)
-	{
-		free(args);
-		return;
-	}
-
-	/* Handle builtins or execute command */
-	if (check_builtins(args) == 0)
-		execute(args);
-
-	free(args);
-}
-
-/**
- * main - Entry point of the shell.
- * @argc: Number of arguments.
- * @argv: Array of arguments.
- *
- * Return: 0 on success, otherwise the status of the last executed command.
+ * main - Main entry point for our custom shell.
+ * @argc: The number of arguments.
+ * @argv: The argument vector.
+ * Return: 0 on success, otherwise the appropriate error code.
  */
 int main(int argc, char **argv)
 {
 	char *line = NULL;
+	char **tokens;
 	size_t len = 0;
 	ssize_t read;
-	FILE *fp = stdin;
 
-	/* If there's a command line argument, open the file */
 	if (argc > 1)
 	{
-		fp = fopen(argv[1], "r");
-		if (!fp)
-		{
-			perror("Error opening file");
-			return (1);
-		}
+		fprintf(stderr, "%s: Error: Too many arguments\n", argv[0]);
+		return (1);
 	}
 
-	/* Main loop */
-	while ((read = getline(&line, &len, fp)) != -1)
+	while (1)
 	{
-		process_line(line, fp);
+		printf("#cisfun$ ");
+		read = getline(&line, &len, stdin);
+		if (read == -1) /* Handle Ctrl+D (EOF) */
+		{
+			printf("\n");
+			free(line);
+			return (0);
+		}
+		else if (strncmp(line, "exit\n", 5) == 0) /* Exit command */
+		{
+			free(line);
+			return (0);
+		}
+		tokens = tokenize(line);
+		if (tokens[0])
+			execute(tokens);
+		free_tokens(tokens);
+		free(line);
+		line = NULL;
 	}
-
-	free(line);
-
-	/* Close the file if it's not stdin */
-	if (fp != stdin)
-		fclose(fp);
-
 	return (0);
 }

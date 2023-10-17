@@ -3,19 +3,19 @@
 /**
  * tokenize - Tokenizes a string into an array of tokens.
  * @str: The string to tokenize.
- * @delim: The delimiter to tokenize with.
+ * @delim: The delimiters to use.
  *
- * Return: A NULL-terminated array of tokens, or NULL on failure.
+ * Return: A NULL-terminated array of tokens.
  */
-char **tokenize(char *str, const char *delim)
+char **tokenize(char *str, char *delim)
 {
-	int bufsize = 64, position = 0;
-	char **tokens = malloc(bufsize * sizeof(char *));
+	int buf_size = TOKENS_BUFFER_SIZE, position = 0;
+	char **tokens = malloc(buf_size * sizeof(char *));
 	char *token;
 
 	if (!tokens)
 	{
-		perror("shell: allocation error\n");
+		perror("Tokenization error: memory allocation failed");
 		exit(EXIT_FAILURE);
 	}
 
@@ -25,13 +25,13 @@ char **tokenize(char *str, const char *delim)
 		tokens[position] = token;
 		position++;
 
-		if (position >= bufsize)
+		if (position >= buf_size)
 		{
-			bufsize += 64;
-			tokens = realloc(tokens, bufsize * sizeof(char *));
+			buf_size += TOKENS_BUFFER_SIZE;
+			tokens = realloc(tokens, buf_size * sizeof(char *));
 			if (!tokens)
 			{
-				perror("shell: allocation error\n");
+				perror("Tokenization error: memory reallocation failed");
 				exit(EXIT_FAILURE);
 			}
 		}

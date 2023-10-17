@@ -1,57 +1,51 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-/* Includes */
+#define TOKENS_BUFFER_SIZE 64 
+
+/* Include libraries */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
-#include <errno.h> 
+#include <fcntl.h>
+#include <signal.h>
+#include <errno.h>
 
 /* Function Prototypes */
-extern char **environ;
-
-/* main.c */
-void process_line(char *line, FILE *fp);
-int check_builtins(char **args);
-
-/* execute.c */
-int execute(char **args);
-
-/* tokenize.c */
-char **tokenize(char *str, const char *delim);
-
-/* path.c */
-char *get_cmd_path(char *cmd);
-char *get_current_dir(void);
-
-/* builtins.c */
-int execute_builtin(char **args);
-int shell_exit(char **args);
-int shell_env(char **args);
-int shell_cd(char **args);
-int builtin_cd(char **args);
-int builtin_exit(char **args); 
-int builtin_env(char **args);
-
-/* utility_functions.c */
-char *_strdup(const char *str);
+char *read_line(void);
+char **split_line(char *line);
+int execute_cmd(char **args);
+char *find_cmd_in_PATH(char *cmd);
+int launch_process(char **args);
+void free_grid(char **grid);
+int handle_builtin_cmds(char **args);
+char **tokenize(char *str, char *delim)
+void execute(char **tokens);
+void free_tokens(char **tokens);
+void print_env(char **env);
 int _strlen(char *str);
-void free_array(char **array);
+
+/* Built-in function prototypes */
+int builtin_cd(char **args);
+int builtin_exit(char **args);
+int builtin_env(char **args);
+int builtin_setenv(char **args, char ***env);
+int builtin_unsetenv(char **args, char ***env);
+int builtin_help(char **args);
+
+/* Error handler */
+void print_error(char *arg);
+
+/* Utility function prototypes */
+int _strlen(const char *s);
+char *_strcpy(char *dest, const char *src);
 int _strcmp(const char *s1, const char *s2);
-
-/* getline_custom.c */
-ssize_t getline_custom(char **lineptr, size_t *n, FILE *stream);
-
-/* Structures */
-typedef struct builtin_struct
-{
-        char *name;
-        int (*func)(char **args);
-} builtin_t;
+char *_strcat(char *dest, const char *src);
+char *_strdup(const char *str);
 
 #endif /* SHELL_H */
 

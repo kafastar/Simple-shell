@@ -1,64 +1,68 @@
 #include "shell.h"
 
-/*
- **
- * check_builtins - Checks if the command is a builtin.
- * @args: The command arguments.
- * Return: 1 if command is a builtin, 0 otherwise.
+/**
+ * _puts - Custom function to print a string to stdout.
+ * @str: The string to print.
  */
-int check_builtins(char **args)
+void _puts(char *str);
+
+/**
+ * builtin_check - Checks if the command is a built-in.
+ * @cmd: The command to check.
+ *
+ * Return: 1 if it's a built-in, 0 otherwise.
+ */
+int builtin_check(char *cmd)
 {
-	if (_strcmp(args[0], "cd") == 0)
-		return (builtin_cd(args));
-	if (_strcmp(args[0], "exit") == 0)
-		return (builtin_exit(args));
-	if (_strcmp(args[0], "env") == 0)
-		return (builtin_env(args));
+	if (_strcmp(cmd, "exit") == 0 || _strcmp(cmd, "env") == 0)
+		return (1);
 	return (0);
 }
 
 /**
- * builtin_cd - Changes the current directory.
- * @args: The command arguments.
- * Return: 1 on success, 0 otherwise.
+ * execute_builtin - Executes the built-in command.
+ * @cmd: The command to execute.
+ * @env: The environment variables.
+ *
+ * Return: 1 if the shell should continue, 0 if it should exit.
  */
-int builtin_cd(char **args)
+int execute_builtin(char *cmd, char **env)
 {
-	if (args[1] == NULL)
-	{
-		fprintf(stderr, "expected argument to \"cd\"\n");
+	if (_strcmp(cmd, "exit") == 0)
 		return (0);
-	}
-	if (chdir(args[1]) != 0)
-		perror("lsh");
-	return (1);
-}
-
-/**
- * builtin_exit - Exits the shell.
- * @args: The command arguments.
- * Return: 1 on success, 0 otherwise.
- */
-int builtin_exit(char **args)
-{
-	(void)args;
-	exit(0);
-}
-
-/**
- * builtin_env - Prints the environment.
- * @args: The command arguments.
- * Return: 1 on success, 0 otherwise.
- */
-int builtin_env(char **args)
-{
-	char **env = environ;
-
-	(void)args;
-	while (*env != NULL)
+	if (_strcmp(cmd, "env") == 0)
 	{
-		printf("%s\n", *env);
-		env++;
+		print_env(env);
+		return (1);
 	}
 	return (1);
+}
+
+/**
+ * print_env - Prints the environment variables.
+ * @env: The environment variables.
+ */
+void print_env(char **env)
+{
+	int i = 0;
+
+	while (env[i])
+	{
+		_puts(env[i]);
+		_puts("\n");
+		i++;
+	}
+}
+
+/**
+ * _puts - Custom function to print a string to stdout.
+ * @str: The string to print.
+ */
+void _puts(char *str)
+{
+	while (*str)
+	{
+		write(1, str, 1);
+		str++;
+	}
 }
